@@ -1,0 +1,51 @@
+<install>
+	<name>ofxDome</name>
+	<author>Yosuke Morimoto</author>
+	<version>0.0.1</version>
+	
+	<add>
+		<!-- 	=====================================================================	-->
+		<!--	========================== add per project using this addon =========	-->
+		<!-- 	=====================================================================	-->
+	
+	    <src>
+	
+		    <folder name="addons/ofxDome/src">
+			    <file>../../../addons/ofxDome/src/BaseApp.cpp</file>
+			    <file>../../../addons/ofxDome/src/BaseApp.h</file>
+			    <file>../../../addons/ofxDome/src/ClientScreen.cpp</file>
+			    <file>../../../addons/ofxDome/src/ClientScreen.h</file>
+			    <file>../../../addons/ofxDome/src/CoordinateSystem.cpp</file>
+			    <file>../../../addons/ofxDome/src/CoordinateSystem.h</file>
+			    <file>../../../addons/ofxDome/src/Gradation.cpp</file>
+			    <file>../../../addons/ofxDome/src/Gradation.h</file>
+			    <file>../../../addons/ofxDome/src/interpolation.cpp</file>
+			    <file>../../../addons/ofxDome/src/interpolation.h</file>
+			    <file>../../../addons/ofxDome/src/MasterScreen.cpp</file>
+			    <file>../../../addons/ofxDome/src/MasterScreen.h</file>
+			    <file>../../../addons/ofxDome/src/Mesh.cpp</file>
+			    <file>../../../addons/ofxDome/src/Mesh.h</file>
+			    <file>../../../addons/ofxDome/src/MeshControl.cpp</file>
+			    <file>../../../addons/ofxDome/src/MeshControl.h</file>
+			    <file>../../../addons/ofxDome/src/MultiScreenApp.cpp</file>
+			    <file>../../../addons/ofxDome/src/MultiScreenApp.h</file>
+			    <file>../../../addons/ofxDome/src/ofxDome.cpp</file>
+			    <file>../../../addons/ofxDome/src/ofxDome.h</file>
+			    <file>../../../addons/ofxDome/src/PolarCoords.cpp</file>
+			    <file>../../../addons/ofxDome/src/PolarCoords.h</file>
+			    <file>../../../addons/ofxDome/src/Screen.cpp</file>
+			    <file>../../../addons/ofxDome/src/Screen.h</file>
+			    <file>../../../addons/ofxDome/src/TextureWarp.cpp</file>
+			    <file>../../../addons/ofxDome/src/TextureWarp.h</file>
+			    <file>../../../addons/ofxDome/src/Types.h</file>
+		    </folder>
+	
+	    </src>
+	
+	    <include>
+		    <path>../../../addons/ofxDome/src</path>
+	    </include>
+				
+	</add>
+	
+</install>
