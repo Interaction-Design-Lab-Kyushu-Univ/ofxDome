@@ -27,11 +27,10 @@ void testApp::update() {
 
 //--------------------------------------------------------------
 void testApp::draw() {
-	ofFbo& fbo = dome.getFbo(0);
-	fbo.begin();
+	ofFbo& fbo = dome.beginFbo(0);
 	// image.draw(0.0f, 0.0f, fbo.getWidth(), fbo.getHeight() * 2.0f);
 	image.draw(0.0f, 0.0f, fbo.getWidth(), fbo.getHeight());
-	fbo.end();
+	dome.endFbo(0);
 	
 	
 	/*for (int i = 0; i < ofxDome::CUBE_TEXTURES_NUM; i++) {

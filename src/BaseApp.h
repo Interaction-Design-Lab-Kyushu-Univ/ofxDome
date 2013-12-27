@@ -38,6 +38,7 @@ namespace ofxDome {
 		bool getMeshVisiblity() const;
 		
 		ofFbo& getFbo(int index);
+		int countFbos() const;
 		
 		std::string getMeshCompositionString() const;
 		bool loadMeshCompositionString(const std::string& string);

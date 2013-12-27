@@ -65,6 +65,10 @@ ofFbo& BaseApp::getFbo(int index) {
 	return fbos->at(index);
 }
 
+int BaseApp::countFbos() const {
+	return fbos->size();
+}
+
 std::string BaseApp::getMeshCompositionString() const {
 	return meshes[0]->getCompositionString() + "/" + meshes[1]->getCompositionString();
 }

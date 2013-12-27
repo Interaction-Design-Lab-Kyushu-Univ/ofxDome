@@ -74,5 +74,17 @@ namespace ofxDome {
 		 * @return instance of ofFbo
 		 */
 		ofFbo& getFbo(int index);
+		
+		/**
+		 * return number of available FBOs
+		 */
+		int countFbos() const;
+		
+		/**
+		 * shorthand method
+		 */
+		ofFbo& beginFbo(int index = 0, bool setupScreen = true) { getFbo(index).begin(setupScreen); return getFbo(index); };
+		void endFbo();
+		void endFbo(int index) { getFbo(index).end(); };
 	};
 }

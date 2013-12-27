@@ -59,11 +59,21 @@ namespace ofxDome {
 		return baseApp->getFbo(index);
 	}
 	
+	int ofxDome::countFbos() const {
+		return baseApp->countFbos();
+	}
+	
 	std::string ofxDome::getMeshCompositionString() const {
 		return baseApp->getMeshCompositionString();
 	}
 	
 	bool ofxDome::loadMeshCompositionString(const std::string& string) {
 		return baseApp->loadMeshCompositionString(string);
+	}
+
+	void ofxDome::endFbo() {
+		for (int i = 0; i < countFbos(); i++) {
+			getFbo(i).end();
+		}
 	}
 }
