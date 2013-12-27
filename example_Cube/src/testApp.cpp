@@ -3,12 +3,16 @@
 //--------------------------------------------------------------
 void testApp::setup() {
 	dome.setScreenDivision(3, 1);
-	dome.setCoordinateSystemPanorama(2048, 512);
+	dome.setCoordinateSystemCube(1024);
 	dome.setup();
 	
 	dome.loadMeshCompositionString(ofBufferFromFile("mesh.txt").getText());
 	
-	image = ofImage("panorama.jpg");
+	images[ofxDome::CUBE_TEXTURE_TOP] = ofImage("cube_top.jpg");
+	images[ofxDome::CUBE_TEXTURE_FRONT] = ofImage("cube_front.jpg");
+	images[ofxDome::CUBE_TEXTURE_LEFT] = ofImage("cube_left.jpg");
+	images[ofxDome::CUBE_TEXTURE_RIGHT] = ofImage("cube_right.jpg");
+	images[ofxDome::CUBE_TEXTURE_BACK] = ofImage("cube_back.jpg");
 }
 
 //--------------------------------------------------------------
@@ -18,9 +22,11 @@ void testApp::update() {
 
 //--------------------------------------------------------------
 void testApp::draw() {
-	ofFbo& fbo = dome.beginFbo(0);
-	image.draw(0.0f, 0.0f, fbo.getWidth(), fbo.getHeight());
-	dome.endFbo(0);
+	for (int i = 0; i < ofxDome::CUBE_TEXTURES_NUM; i++) {
+		dome.beginFbo(i);
+		images[i].draw(0, 0, 1024, 1024);
+		dome.endFbo(i);
+	}
 }
 
 //--------------------------------------------------------------

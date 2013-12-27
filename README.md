@@ -48,24 +48,24 @@ Your code must be between dome.beginFbo and dome.endFbo.
 
 ###Panorama or Polar Coords
 
-	dome.beginFbo()
+	dome.beginFbo(0)
 	// your code here
-	dome.endFbo()
+	dome.endFbo(0)
 
 ###Cube Coords
 
 You must prepare 5 textures.
 
 	dome.beginFbo(ofxDome::CUBE_TEXTURE_TOP);
-	dome.endFbo();
+	dome.endFbo(ofxDome::CUBE_TEXTURE_TOP);
 	dome.beginFbo(ofxDome::CUBE_TEXTURE_LEFT);
-	dome.endFbo();
+	dome.endFbo(ofxDome::CUBE_TEXTURE_LEFT);
 	dome.beginFbo(ofxDome::CUBE_TEXTURE_FRONT);
-	dome.endFbo();
+	dome.endFbo(ofxDome::CUBE_TEXTURE_FRONT);
 	dome.beginFbo(ofxDome::CUBE_TEXTURE_RIGHT);
-	dome.endFbo();
+	dome.endFbo(ofxDome::CUBE_TEXTURE_RIGHT);
 	dome.beginFbo(ofxDome::CUBE_TEXTURE_BACK);
-	dome.endFbo();
+	dome.endFbo(ofxDome::CUBE_TEXTURE_BACK);
 
 ##Other Methods
 

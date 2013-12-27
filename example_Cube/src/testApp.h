@@ -6,7 +6,7 @@
 class testApp : public ofBaseApp {
 	
 	ofxDome::ofxDome dome;
-	ofImage image;
+	ofImage images[5];
 	
 public:
 	void setup();

@@ -3,12 +3,12 @@
 //--------------------------------------------------------------
 void testApp::setup() {
 	dome.setScreenDivision(3, 1);
-	dome.setCoordinateSystemPanorama(2048, 512);
+	dome.setCoordinateSystemPolar(2048);
 	dome.setup();
 	
 	dome.loadMeshCompositionString(ofBufferFromFile("mesh.txt").getText());
 	
-	image = ofImage("panorama.jpg");
+	image = ofImage("polar.jpg");
 }
 
 //--------------------------------------------------------------
