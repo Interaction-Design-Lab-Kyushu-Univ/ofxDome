@@ -7,7 +7,7 @@ void testApp::setup() {
 	dome.setup();
 	
 	dome.loadMeshCompositionString(ofBufferFromFile("mesh.txt").getText());
-	
+    
 	image = ofImage("panorama.jpg");
 }
 

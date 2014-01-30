@@ -7,18 +7,18 @@
 
 namespace ofxDome {
 	
-	class InterpolationFunc {
+	template <typename T> class Function_Float {
 	protected:
 		ofPtr<void> capture;
-		float(*func)(void *, float);
+		T(*func)(void *, float);
 	public:
-		InterpolationFunc() : func(NULL) {};
+		Function_Float() : func(NULL) {};
 		
-		template <typename M> explicit InterpolationFunc(const M& m)  {
+		template <typename M> explicit Function_Float(const M& m)  {
 			capture = ofPtr<void>(new M(m));
 			class Temp {
 			public:
-				static float call(void* p, float t) {
+				static T call(void* p, float t) {
 					M* mp = (M*)p;
 					return (*mp)(t);
 				}
@@ -26,18 +26,28 @@ namespace ofxDome {
 			func = &Temp::call;
 		};
 		
-		InterpolationFunc(const InterpolationFunc& source)
+		Function_Float(const Function_Float& source)
 		: capture(source.capture), func(source.func)
 		{};
 		
-		float operator()(float t) {
+		T operator()(float t) {
 			return func(capture.get(), t);
 		};
 	};
+    
+    class QuaternionAnchor {
+    public:
+        float x;
+        ofQuaternion y;
+        QuaternionAnchor() {};
+        QuaternionAnchor(float x, const ofQuaternion& y) : x(x), y(y) {};
+    };
 	
-	typedef InterpolationFunc interpolation_func_t;
+	typedef Function_Float<float> interpolation_func_t;
 
 	interpolation_func_t getSplineInterpolation(const std::vector<ofVec2f>& points, int n = 3);
 	interpolation_func_t getLagrangeInterpolation(const std::vector<ofVec2f>& points);
 	interpolation_func_t getLinearInterpolation(const std::vector<ofVec2f>& points);
+    
+	Function_Float<ofQuaternion> getLinearInterpolation(const std::vector<QuaternionAnchor>& points);
 }

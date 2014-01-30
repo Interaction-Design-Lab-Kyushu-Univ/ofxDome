@@ -15,9 +15,9 @@ namespace ofxDome {
 	public:
 		MeshVert() {};
 		MeshVert(const ofVec2f& screenPosition, const PolarCoords& polarCoords);
-		MeshVert(const ofVec2f& screenPosition, const ofVec2f& xy);
+		MeshVert(const ofVec2f& screenPosition, const ofQuaternion& quat);
 		ofVec2f screenPosition;
-		ofVec2f xy;
+		PolarCoords pc;
 	};
 	
 	class MeshLine {
@@ -25,12 +25,12 @@ namespace ofxDome {
 		
 		Mesh* mesh;
 		mutable bool shouldRegenerateScreenPositionInterpolation;
-		mutable bool shouldRegenerateXYInterpolation;
+		mutable bool shouldRegenerateQuaternionInterpolation;
 		mutable interpolation_func_t interpolationScreenX, interpolationScreenY;
-		mutable interpolation_func_t interpolationX, interpolationY;
+		mutable Function_Float<ofQuaternion> interpolationQuaternion;
 		
 		void generateScreenPositionInterpolation() const;
-		void generateXYInterpolation() const;
+		void generateQuaternionInterpolation() const;
 	public:
 		MeshLine(Mesh* mesh = NULL);
 		std::vector<int> vertIndices;
@@ -63,7 +63,8 @@ namespace ofxDome {
 		
 		void drawLines(int smooth);
 		
-		ofVec2f convertPolarCoordsToScreenPosition(const PolarCoords& pc, bool* error) const;
+        // return true if success
+		bool convertPolarCoordsToScreenPosition(const PolarCoords& pc, ofVec2f* result) const;
 		
 		// return true if error occurs
 		virtual bool loadCompositionString(const std::string& str) = 0;

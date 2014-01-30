@@ -4,6 +4,9 @@ namespace {
 	bool compareVec2f(const ofVec2f& a, const ofVec2f& b) {
 		return a.x < b.x;
 	}
+	bool compareQuat(const ofxDome::QuaternionAnchor& a, const ofxDome::QuaternionAnchor& b) {
+		return a.x < b.x;
+	}
 }
 
 namespace ofxDome {
@@ -65,7 +68,7 @@ namespace ofxDome {
 		returnValue.d = d;
 		returnValue.n = n;
 		
-		return InterpolationFunc(returnValue);
+		return Function_Float<float>(returnValue);
 	}
 
 	interpolation_func_t getLagrangeInterpolation(const std::vector<ofVec2f>& points) {
@@ -93,7 +96,7 @@ namespace ofxDome {
 		} returnValue;
 		
 		returnValue.points = points;
-		return InterpolationFunc(returnValue);
+		return Function_Float<float>(returnValue);
 	}
 
 	interpolation_func_t getLinearInterpolation(const std::vector<ofVec2f>& points) {
@@ -121,6 +124,38 @@ namespace ofxDome {
 		} returnValue;
 		
 		returnValue.sorted_points = sorted_points;
-		return InterpolationFunc(returnValue);
+		return Function_Float<float>(returnValue);
 	}
+    
+    
+	Function_Float<ofQuaternion> getLinearInterpolation(const std::vector<QuaternionAnchor>& points) {
+		std::vector<QuaternionAnchor> sorted_points = points;	// copy;
+		std::sort(sorted_points.begin(), sorted_points.end(), &compareQuat);
+        
+        struct {
+			std::vector<QuaternionAnchor> sorted_points;
+            ofQuaternion operator()(float x) {
+				int low = 0, high = 1;
+				for (int i = 0; i < sorted_points.size() - 1; i++) {
+					if (sorted_points[i].x <= x && x <= sorted_points[i+1].x) {
+						low = i;
+						high = i+1;
+						break;
+					}
+				}
+				if (sorted_points[sorted_points.size()-1].x < x) {
+					low = sorted_points.size() - 2;
+					high = sorted_points.size() - 1;
+				}
+				float level = (x - sorted_points[low].x) / (sorted_points[high].x - sorted_points[low].x);
+                
+                ofQuaternion quat;
+                quat.slerp(level, sorted_points[low].y, sorted_points[high].y);
+                return quat;
+            }
+        } returnValue;
+        returnValue.sorted_points = sorted_points;
+        
+        return Function_Float<ofQuaternion>(returnValue);
+    }
 }

@@ -13,34 +13,43 @@ namespace {
 	float cross(const ofVec2f& a, const ofVec2f &b) {
 		return a.x * b.y - b.x * a.y;
 	}
+    
+    ofVec3f operator* (const ofVec3f& vec, const ofMatrix3x3& mat) {
+        ofVec3f result;
+        result.x = mat.a * vec.x + mat.d * vec.y + mat.g * vec.z;
+        result.y = mat.b * vec.x + mat.e * vec.y + mat.h * vec.z;
+        result.z = mat.c * vec.x + mat.f * vec.y + mat.i * vec.z;
+        return result;
+    }
 	
-	bool isInsideTriangle(const ofVec2f& p, const ofVec2f& a, const ofVec2f& b, const ofVec2f& c) {
-		float c1 = cross(p - a, b - a);
-		float c2 = cross(p - b, c - b);
-		float c3 = cross(p - c, a - c);
-		
-		if (c1 <= 0.01f && c2 <= 0.01f && c3 <= 0.01f) return true;
-		if (c1 >= -0.01f && c2 >= -0.01f && c3 >= -0.01f) return true;
-		return false;
-	}
-	
-	ofVec2f triangleToScreenPosition(const ofVec2f& p, const MeshVert& a, const MeshVert& b, const MeshVert& c, bool* error) {
-		ofVec2f _p = p - a.xy;
-		ofVec2f _b = b.xy - a.xy;
-		ofVec2f _c = c.xy - a.xy;
-		
-		float det = (_b.x * _c.y - _b.y * _c.x);
-		
-		if (abs(det) < 0.01f) {
-			*error = true;
-			return ofVec2f();
-		}
-		
-		float s = (_p.x * _c.y - _p.y * _c.x) / det;
-		float t = - (_p.x * _b.y - _p.y * _b.x) / det;
-		
-		*error = false;
-		return a.screenPosition + s * (b.screenPosition - a.screenPosition) + t * (c.screenPosition - a.screenPosition);
+    // return true if p is in the abc triangle
+	bool triangleToScreenPosition(const PolarCoords& p, const MeshVert& a, const MeshVert& b, const MeshVert& c, ofVec2f* result) {
+		ofVec3f pv = p.direction();
+        ofVec3f av = a.pc.direction();
+		ofVec3f bv = b.pc.direction();
+		ofVec3f cv = c.pc.direction();
+
+        ofMatrix3x3 mat;
+        mat.a = av.x - bv.x;
+        mat.b = av.y - bv.y;
+        mat.c = av.z - bv.z;
+        mat.d = av.x - cv.x;
+        mat.e = av.y - cv.y;
+        mat.f = av.z - cv.z;
+        mat.g = pv.x;
+        mat.h = pv.y;
+        mat.i = pv.z;
+
+        mat.invert();
+        
+        ofVec3f s = av * mat;
+        
+        if (0.0f <= s.x && s.x <= 1.0f && 0.0f <= s.y && s.y <= 1.0f && 0.0f < s.z && s.z <= 1.0f) {
+            *result = a.screenPosition + (b.screenPosition - a.screenPosition) * s.x + (c.screenPosition - a.screenPosition) * s.y;
+            return true;
+        } else {
+            return false;
+        }
 	}
 	
 	std::ostream& operator<< (std::ostream& stream, const MeshLine& line) {
@@ -52,7 +61,7 @@ namespace {
 }
 
 MeshLine::MeshLine(Mesh* mesh)
-: shouldRegenerateScreenPositionInterpolation(true), shouldRegenerateXYInterpolation(true), mesh(mesh)
+: shouldRegenerateScreenPositionInterpolation(true), shouldRegenerateQuaternionInterpolation(true), mesh(mesh)
 {
 }
 
@@ -76,22 +85,17 @@ void MeshLine::generateScreenPositionInterpolation() const {
 	shouldRegenerateScreenPositionInterpolation = false;
 }
 
-void MeshLine::generateXYInterpolation() const {
-	std::vector<ofVec2f> xPoints, yPoints;
-	xPoints.reserve(vertIndices.size());
-	yPoints.reserve(vertIndices.size());
+void MeshLine::generateQuaternionInterpolation() const {
+	std::vector<QuaternionAnchor> quatAnchors;
 	
 	for (int i = 0; i < vertIndices.size(); i++) {
 		float t = (float)i / (vertIndices.size() - 1);
-		ofVec2f xy = mesh->getVert(vertIndices[i]).xy;
-		xPoints.push_back(ofVec2f(t, xy.x));
-		yPoints.push_back(ofVec2f(t, xy.y));
+		QuaternionAnchor anchor(t, mesh->getVert(vertIndices[i]).pc.quaternion());
+		quatAnchors.push_back(anchor);
 	}
-	
-	interpolationX = getSplineInterpolation(xPoints);
-	interpolationY = getSplineInterpolation(yPoints);
-	
-	shouldRegenerateXYInterpolation = false;
+    
+    interpolationQuaternion = getLinearInterpolation(quatAnchors);
+	shouldRegenerateQuaternionInterpolation = false;
 }
 
 ofVec2f MeshLine::getInterpolatedScreenPosition(float t) const {
@@ -102,15 +106,15 @@ ofVec2f MeshLine::getInterpolatedScreenPosition(float t) const {
 }
 
 MeshVert MeshLine::getInterpolatedMeshVert(float t) const {
-	if (shouldRegenerateXYInterpolation) {
-		generateXYInterpolation();
+	if (shouldRegenerateQuaternionInterpolation) {
+		generateQuaternionInterpolation();
 	}
-	return MeshVert(getInterpolatedScreenPosition(t), ofVec2f(interpolationX(t), interpolationY(t)));
+	return MeshVert(getInterpolatedScreenPosition(t), interpolationQuaternion(t));
 }
 
 bool MeshLine::setAsDirty() {
 	shouldRegenerateScreenPositionInterpolation = true;
-	shouldRegenerateXYInterpolation = true;
+	shouldRegenerateQuaternionInterpolation = true;
 }
 
 void MeshLine::draw(int smooth) {
@@ -136,13 +140,13 @@ void MeshLine::draw(int smooth) {
 
 
 MeshVert::MeshVert(const ofVec2f& screenPosition, const PolarCoords& polarCoords)
-:screenPosition(screenPosition), xy(polarCoords.xy())
+:screenPosition(screenPosition), pc(polarCoords)
 {
 	
 }
 
-MeshVert::MeshVert(const ofVec2f& screenPosition, const ofVec2f& xy)
-: screenPosition(screenPosition), xy(xy)
+MeshVert::MeshVert(const ofVec2f& screenPosition, const ofQuaternion& quat)
+: screenPosition(screenPosition), pc(PolarCoords(quat))
 {
 	
 }
@@ -185,15 +189,10 @@ int Mesh::getLinesNum() const {
 	return lines.size();
 }
 
-ofVec2f Mesh::convertPolarCoordsToScreenPosition(const PolarCoords& pc, bool* error) const {
-	ofVec2f xy = pc.xy();
-	
-	*error = false;
-	
+bool Mesh::convertPolarCoordsToScreenPosition(const PolarCoords& pc, ofVec2f* result) const {
 	for (int i = 0; i < triIndices.size(); i += 3) {
-		if (isInsideTriangle(xy, verts[triIndices[i]].xy, verts[triIndices[i+1]].xy, verts[triIndices[i+2]].xy)) {
-			return triangleToScreenPosition(xy, verts[triIndices[i]], verts[triIndices[i+1]], verts[triIndices[i+2]], error);
-		}
+        bool success = triangleToScreenPosition(pc, verts[triIndices[i]], verts[triIndices[i+1]], verts[triIndices[i+2]], result);
+        if (success) return true;
 	}
 	
 	for (int i = 0; i < quadIndices.size(); i += 4) {
@@ -201,17 +200,14 @@ ofVec2f Mesh::convertPolarCoordsToScreenPosition(const PolarCoords& pc, bool* er
 		const MeshVert& v1 = verts[quadIndices[i+1]];
 		const MeshVert& v2 = verts[quadIndices[i+2]];
 		const MeshVert& v3 = verts[quadIndices[i+3]];
-		if (isInsideTriangle(xy, v0.xy, v1.xy, v2.xy)) {
-			return triangleToScreenPosition(xy, v0, v1, v2, error);
-		}
-		if (isInsideTriangle(xy, v0.xy, v2.xy, v3.xy)) {
-			return triangleToScreenPosition(xy, v0, v2, v3, error);
-		}
+        bool success = triangleToScreenPosition(pc, v0, v1, v2, result);
+        if (success) return true;
+        success = triangleToScreenPosition(pc, v0, v2, v3, result);
+        if (success) return true;
 	}
 	
 	// cannot find screen position
-	*error = true;
-	return ofVec2f();
+	return false;
 }
 
 std::string Mesh::getCompositionString() const {
@@ -420,8 +416,13 @@ ofPtr<QuarterSphereMesh> QuarterSphereMesh::createDivision() {
 			int top = MAX(pos - (mesh->horizontalDivision+1), 0);
 			int bottom = pos + mesh->horizontalDivision + 1;
 			ofVec2f scrPos = (mesh->verts[pos-1].screenPosition + mesh->verts[pos+1].screenPosition + mesh->verts[top].screenPosition + mesh->verts[bottom].screenPosition) * 0.25f;
-			ofVec2f xy = (mesh->verts[pos-1].xy + mesh->verts[pos+1].xy + mesh->verts[top].xy + mesh->verts[bottom].xy) * 0.25f;
-			mesh->verts[pos] = MeshVert(scrPos, xy);
+            
+            ofQuaternion mid1, mid2, mid3;
+            mid1.slerp(0.5f, mesh->verts[pos-1].pc.quaternion(), mesh->verts[pos+1].pc.quaternion());
+            mid2.slerp(0.5f, mesh->verts[top].pc.quaternion(), mesh->verts[bottom].pc.quaternion());
+            mid3.slerp(0.5f, mid1, mid2);
+            
+			mesh->verts[pos] = MeshVert(scrPos, mid3);
 		}
 	}
 	

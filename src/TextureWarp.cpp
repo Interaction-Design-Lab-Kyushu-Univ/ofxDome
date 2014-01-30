@@ -33,9 +33,9 @@ void TextureWarp::generate() {
 			float u = (float)i / (UV_DIVISION - 1);
 			
 			PolarCoords pc = coordinateSystem->convertUVFast(ofVec2f(u, v), textureId);
-			bool error;
-			ofVec2f sp = mesh->convertPolarCoordsToScreenPosition(pc, &error);
-			if (!error) {
+            ofVec2f sp;
+			bool success = mesh->convertPolarCoordsToScreenPosition(pc, &sp);
+			if (success) {
 				verts.push_back(sp);
 				texCoords.push_back(ofVec2f(u * maxTexCoords.x, v * maxTexCoords.y));
 				errors.push_back(false);
