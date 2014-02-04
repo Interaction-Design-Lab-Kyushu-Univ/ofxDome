@@ -8,15 +8,28 @@ Current version is based on version 0.8.0.
 ofxDome is under the MIT License.
 Please see License.txt for details.
 
-##Setup
+##Work with multiscreen
+ofxDome requires at least 3 screens; 2 for projectors and 1 for control.
+When using Mac OS X 10.9 (Mavericks), you need to disable Mission Control.
 
+After that, you should change main.cpp like below.
+
+	#include "ofMain.h"
+	#include "testApp.h"
+	#include "ofAppGLFWWindow.h"
+
+	int main( ){
+	    ofPtr<ofAppGLFWWindow> window = ofPtr<ofAppGLFWWindow>(new ofAppGLFWWindow());
+	    window->setMultiDisplayFullscreen(true);
+		ofSetupOpenGL(window, 1280*3, 800, OF_FULLSCREEN);
+		ofRunApp(new testApp());
+	}
+
+Window size is decided by your screen size and OS preferences.
+For example, when you tile screens horizontally in your OS preference, you have to make 3x width fullscreen window.
+
+## Setup ofxDome	
 Add all src/* files into your project and set include paths.
-
-Set screen size and window mode in main.cpp appropliately.
-ofxDome requires at least 3 screens; 2 for projector and 1 for controls.
-For example, when you tile screens horizontally on your OS preference, you have to make 3x width fullscreen window.
-
-##Configuration
 
 Add
 `#include "ofxDome/ofxDome.h"`
@@ -25,7 +38,6 @@ Add an instance into your testApp class
 
 	class testApp : public ofBaseApp {
 		ofxDome::ofxDome dome;
-		// omit
 	};
 
 Configure your dome projection inside setup().
