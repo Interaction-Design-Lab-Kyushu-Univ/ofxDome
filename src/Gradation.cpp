@@ -28,17 +28,17 @@ void QuarterSphereGradation::generate() {
 	for (int i = mesh->getVerticalDivision() - 1; i >= 0; i--) {
 		const MeshLine& line = mesh->getNthHorizontalLine(i);
 		float w = 1.0f / line.vertIndices.size();
+		verts.push_back(line.getInterpolatedScreenPosition(0.0f));
+		colors.push_back(ofFloatColor::black);
 		verts.push_back(line.getInterpolatedScreenPosition(w * halfWidth));
 		colors.push_back(ofFloatColor::white);
-		verts.push_back(line.getInterpolatedScreenPosition(- w * halfWidth));
-		colors.push_back(ofFloatColor::black);
 	}
 	
 	int ceilIndex = verts.size();
 	{
 		const MeshLine& centerLine = mesh->getNthVerticalLine((mesh->getHorizontalDivision() - 2) / 2);
 		float w = 1.0f / centerLine.vertIndices.size();
-		verts.push_back(centerLine.getInterpolatedScreenPosition(0.0f/*- w * halfWidth*/));
+		verts.push_back(centerLine.getInterpolatedScreenPosition(0.0f));
 		colors.push_back(ofFloatColor::black);
 		verts.push_back(centerLine.getInterpolatedScreenPosition(w * halfWidth));
 		colors.push_back(ofFloatColor::white);
@@ -47,10 +47,10 @@ void QuarterSphereGradation::generate() {
 	for (int i = 0; i < mesh->getVerticalDivision(); i++) {
 		const MeshLine& line = mesh->getNthHorizontalLine(i);
 		float w = 1.0f / line.vertIndices.size();
+		verts.push_back(line.getInterpolatedScreenPosition(1.0f));
+		colors.push_back(ofFloatColor::black);
 		verts.push_back(line.getInterpolatedScreenPosition(1.0f - w * halfWidth));
 		colors.push_back(ofFloatColor::white);
-		verts.push_back(line.getInterpolatedScreenPosition(1.0f/* + w * halfWidth*/));
-		colors.push_back(ofFloatColor::black);
 	}
 	
 	// create triangle strip
@@ -76,14 +76,14 @@ void QuarterSphereGradation::generate() {
 	verts.push_back(ofVec2f(1.0f, 1.0f));
 	colors.push_back(ofFloatColor::black);
 	
-	for (int i = 0; i < mesh->getVerticalDivision(); i += 2) {
+	for (int i = 0; i < mesh->getVerticalDivision(); i++) {
 		indices.push_back(lefttopIndex);
-		indices.push_back(i);
-		indices.push_back(i + 2);
+		indices.push_back(i*2);
+		indices.push_back(i*2 + 2);
 		
 		indices.push_back(righttopIndex);
-		indices.push_back(ceilIndex + i);
-		indices.push_back(ceilIndex + i + 2);
+		indices.push_back(ceilIndex + i*2);
+		indices.push_back(ceilIndex + i*2 + 2);
 	}
 	
 	indices.push_back(ceilIndex);
@@ -94,7 +94,7 @@ void QuarterSphereGradation::generate() {
 	indices.push_back(lefttopIndex);
 	indices.push_back(leftbottomIndex);
 	
-	indices.push_back(mesh->getVerticalDivision() + ceilIndex);
+	indices.push_back(mesh->getVerticalDivision() * 2 + ceilIndex);
 	indices.push_back(righttopIndex);
 	indices.push_back(rightbottomIndex);
 	
