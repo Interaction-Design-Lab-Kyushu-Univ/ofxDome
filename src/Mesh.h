@@ -61,7 +61,7 @@ namespace ofxDome {
 		const MeshLine& getLine(int index) const;
 		int getLinesNum() const;
 		
-		void drawLines(int smooth);
+		virtual void drawLines(int smooth);
 		
         // return true if success
 		bool convertPolarCoordsToScreenPosition(const PolarCoords& pc, ofVec2f* result) const;
@@ -75,6 +75,10 @@ namespace ofxDome {
 		int horizontalDivision, verticalDivision;
 		void generateLines();
 		void generateFaces();
+        
+        int actualTopLineSmoothness;
+        std::vector<ofVec2f> actualTopLine;
+        void generateActualTopLine(int smooth);
 		
 		QuarterSphereMesh();
 		QuarterSphereMesh(float centerTheta, int horizontalDivsion, int verticalDivision);
@@ -90,5 +94,6 @@ namespace ofxDome {
 		static ofPtr<QuarterSphereMesh> create(float centerTheta, int horizontalDivsion = 4, int verticalDivision = 3);
 		
 		virtual bool loadCompositionString(const std::string& str);
+		virtual void drawLines(int smooth);
 	};
 }

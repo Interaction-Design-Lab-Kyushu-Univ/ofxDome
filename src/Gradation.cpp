@@ -2,18 +2,20 @@
 
 using namespace ofxDome;
 
-QuarterSphereGradation::QuarterSphereGradation(ofPtr<QuarterSphereMesh> mesh, float width)
-: mesh(mesh), halfWidth(width * 0.5f) {
+QuarterSphereGradation::QuarterSphereGradation(ofPtr<QuarterSphereMesh> mesh)
+: mesh(mesh) {
 	generate();
 }
 
-QuarterSphereGradation::QuarterSphereGradation()
-: halfWidth(0.0f) {
+QuarterSphereGradation::QuarterSphereGradation() {
 	
 }
 	
 void QuarterSphereGradation::generate() {
 	assert(mesh != NULL);
+    
+    const float hWidth = OVERWRAP_RADIAN / (M_PI + OVERWRAP_RADIAN);
+    const float vWidth = OVERWRAP_RADIAN / (M_PI_2 + OVERWRAP_RADIAN);
 	
 	vbo.clear();
 	
@@ -27,29 +29,26 @@ void QuarterSphereGradation::generate() {
 	
 	for (int i = mesh->getVerticalDivision() - 1; i >= 0; i--) {
 		const MeshLine& line = mesh->getNthHorizontalLine(i);
-		float w = 1.0f / line.vertIndices.size();
 		verts.push_back(line.getInterpolatedScreenPosition(0.0f));
 		colors.push_back(ofFloatColor::black);
-		verts.push_back(line.getInterpolatedScreenPosition(w * halfWidth));
+		verts.push_back(line.getInterpolatedScreenPosition(hWidth));
 		colors.push_back(ofFloatColor::white);
 	}
 	
 	int ceilIndex = verts.size();
 	{
 		const MeshLine& centerLine = mesh->getNthVerticalLine((mesh->getHorizontalDivision() - 2) / 2);
-		float w = 1.0f / centerLine.vertIndices.size();
 		verts.push_back(centerLine.getInterpolatedScreenPosition(0.0f));
 		colors.push_back(ofFloatColor::black);
-		verts.push_back(centerLine.getInterpolatedScreenPosition(w * halfWidth));
+		verts.push_back(centerLine.getInterpolatedScreenPosition(vWidth));
 		colors.push_back(ofFloatColor::white);
 	}
 	
 	for (int i = 0; i < mesh->getVerticalDivision(); i++) {
 		const MeshLine& line = mesh->getNthHorizontalLine(i);
-		float w = 1.0f / line.vertIndices.size();
 		verts.push_back(line.getInterpolatedScreenPosition(1.0f));
 		colors.push_back(ofFloatColor::black);
-		verts.push_back(line.getInterpolatedScreenPosition(1.0f - w * halfWidth));
+		verts.push_back(line.getInterpolatedScreenPosition(1.0f - hWidth));
 		colors.push_back(ofFloatColor::white);
 	}
 	
@@ -105,10 +104,6 @@ void QuarterSphereGradation::generate() {
 
 void QuarterSphereGradation::setMesh(ofPtr<QuarterSphereMesh> mesh) {
 	this->mesh = mesh;
-}
-
-void QuarterSphereGradation::setWidth(float width) {
-	halfWidth = width * 0.5f;
 }
 
 void QuarterSphereGradation::draw() {

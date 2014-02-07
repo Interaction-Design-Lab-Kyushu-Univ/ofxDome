@@ -13,7 +13,7 @@ MeshControl::MeshControl(ofPtr<QuarterSphereMesh> mesh, ofPtr<CoordinateSystem> 
 : mesh(mesh), coordinateSystem(cs), fbos(fbos)
 {
 	dividedMesh = mesh->createDivision();
-	gradation.reset(new QuarterSphereGradation(dividedMesh, 1.0f));
+	gradation.reset(new QuarterSphereGradation(dividedMesh));
 	
 	for (int i = 0; i < cs->getTexturesNum(); i++) {
 		textureWarps.push_back(ofPtr<TextureWarp>(new TextureWarp(cs, dividedMesh, i)));

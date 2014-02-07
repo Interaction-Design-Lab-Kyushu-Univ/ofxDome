@@ -19,4 +19,6 @@ namespace ofxDome {
 	} ECubeTextureIndex;
 	
 	static const int UV_DIVISION = 100;
+    
+    static const float OVERWRAP_RADIAN = 10.0f / 180.0f * M_PI;
 }

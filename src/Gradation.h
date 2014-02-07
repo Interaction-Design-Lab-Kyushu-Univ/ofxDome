@@ -15,14 +15,12 @@ namespace ofxDome {
 	class QuarterSphereGradation : public Gradation {
 		ofVbo vbo;
 		ofPtr<QuarterSphereMesh> mesh;
-		float halfWidth;
 		
 	public:
 		QuarterSphereGradation();
-		QuarterSphereGradation(ofPtr<QuarterSphereMesh> mesh, float width);
+		QuarterSphereGradation(ofPtr<QuarterSphereMesh> mesh);
 		
 		void setMesh(ofPtr<QuarterSphereMesh> mesh);
-		void setWidth(float width);
 		void generate();
 		void draw();
 	};

@@ -271,21 +271,23 @@ QuarterSphereMesh::QuarterSphereMesh() {
 }
 
 QuarterSphereMesh::QuarterSphereMesh(float centerTheta, int h_div, int v_div)
-: horizontalDivision(h_div), verticalDivision(v_div)
+: horizontalDivision(h_div), verticalDivision(v_div), actualTopLineSmoothness(-1)
 {
+    const float extentionRad = OVERWRAP_RADIAN * 0.5f;
+    
 	verts.reserve(verticalDivision * (horizontalDivision + 1) + 1);
 	
 	// polar vert
 	verts.push_back(MeshVert(
 		ofVec2f(0.5f, 0.0f),
-		PolarCoords(0.0f, M_PI_2)
+		PolarCoords(centerTheta, M_PI_2 + extentionRad)
 	));
 	
 	for (int i = 0; i < verticalDivision; i++) {
 		for (int j = 0; j < horizontalDivision + 1; j++) {
 			ofVec2f screenPosition = ofVec2f(0.1f + (float)j / (horizontalDivision+1), (float)(i+1) / (verticalDivision+1));
-			float theta = normalizeRad(centerTheta + ((float)j / horizontalDivision * 2.0f - 1.0f) * M_PI_2);
-			float phi = M_PI_2 - M_PI_2 * (float)(i+1) / verticalDivision;
+			float theta = normalizeRad(centerTheta + ((float)j / horizontalDivision - 0.5f) * (M_PI + extentionRad));
+			float phi = M_PI_2 + extentionRad - (M_PI_2 + extentionRad) * (float)(i+1) / verticalDivision;
 			verts.push_back(MeshVert(screenPosition, PolarCoords(theta, phi)));
 		}
 	}
@@ -463,4 +465,36 @@ bool QuarterSphereMesh::loadCompositionString(const std::string& str) {
 		generateFaces();
 	}
 	return error;
+}
+
+void QuarterSphereMesh::generateActualTopLine(int smooth) {
+    ofVec2f result;
+    
+    actualTopLine.clear();
+    actualTopLine.reserve(smooth * verticalDivision * 2 + 1);
+    
+    for (int i = 0; i <= smooth * verticalDivision * 2; i++) {
+        float level = (float)i / (smooth * verticalDivision);
+        PolarCoords pc(0.0f, M_PI_2 * level);
+        if (convertPolarCoordsToScreenPosition(pc, &result)) {
+            actualTopLine.push_back(result);
+        }
+    }
+    
+    actualTopLineSmoothness = smooth;
+}
+
+void QuarterSphereMesh::drawLines(int smooth) {
+    Mesh::drawLines(smooth);
+    
+    if (smooth != actualTopLineSmoothness) {
+        generateActualTopLine(smooth);
+    }
+    
+    ofPushStyle();
+    ofSetColor(255, 0, 0);
+    for (int i = 0; i < actualTopLine.size() - 1; i++) {
+        ofLine(actualTopLine[i], actualTopLine[i+1]);
+    }
+    ofPopStyle();
 }
