@@ -26,6 +26,8 @@ namespace ofxDome {
 		ofPtr<MeshControl> meshControls[2];
 		
 		bool isUIEnabled;
+        
+        void setupInternal();
 		
 	public:
 		BaseApp();

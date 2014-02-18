@@ -493,8 +493,10 @@ void QuarterSphereMesh::drawLines(int smooth) {
     
     ofPushStyle();
     ofSetColor(255, 0, 0);
-    for (int i = 0; i < actualTopLine.size() - 1; i++) {
-        ofLine(actualTopLine[i], actualTopLine[i+1]);
+    if (actualTopLine.size() >= 2) {
+        for (int i = 0; i < actualTopLine.size() - 1; i++) {
+            ofLine(actualTopLine[i], actualTopLine[i+1]);
+        }
     }
     ofPopStyle();
 }

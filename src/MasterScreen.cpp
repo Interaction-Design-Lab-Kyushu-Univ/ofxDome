@@ -20,7 +20,6 @@ void MasterScreen::update() {
 	
 }
 
-
 ofRectangle MasterScreen::getFillRect(const ofRectangle& area, float width, float height) {
 	if (area.width * height > width * area.height) {
 		// area is wider than source
