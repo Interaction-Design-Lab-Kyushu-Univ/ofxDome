@@ -10,7 +10,11 @@ namespace {
 }
 
 MeshControl::MeshControl(ofPtr<QuarterSphereMesh> mesh, ofPtr<CoordinateSystem> cs, ofPtr<std::vector<ofFbo> > fbos)
-: mesh(mesh), coordinateSystem(cs), fbos(fbos)
+	: selectedPoint(NOT_SELECTED)
+	, isDragging(false)
+	, mesh(mesh)
+	, coordinateSystem(cs)
+	, fbos(fbos)
 {
 	dividedMesh = mesh->createDivision();
 	gradation.reset(new QuarterSphereGradation(dividedMesh));

@@ -12,8 +12,8 @@ namespace ofxDome {
 		static const int NOT_SELECTED = -1;
 		
 	private:
-		int selectedPoint = NOT_SELECTED;
-		bool isDragging = false;
+		int selectedPoint;
+		bool isDragging;
 		
 		ofPtr<QuarterSphereMesh> mesh;
 		ofPtr<QuarterSphereMesh> dividedMesh;
