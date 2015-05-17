@@ -7,7 +7,7 @@
 using namespace ofxDome;
 
 BaseApp::BaseApp() {
-    isUIEnabled = true;
+	isUIEnabled = true;
 	setScreenDivision(3, 1);
 	fbos = ofPtr<std::vector<ofFbo> >(new std::vector<ofFbo>());
 }
@@ -20,18 +20,18 @@ void BaseApp::setupInternal() {
 	meshes[1] = qsmeshes[1];
 	
 	masterScreen = ofPtr<MasterScreen>(new MasterScreen(
-                                                        ofPtr<MeshControl>(meshControls[0]),
-                                                        ofPtr<MeshControl>(meshControls[1]),
-                                                        fbos
-                                                        ));
-    
-    screens.clear();
+														ofPtr<MeshControl>(meshControls[0]),
+														ofPtr<MeshControl>(meshControls[1]),
+														fbos
+														));
+	
+	screens.clear();
 	screens.push_back(masterScreen);
-    for (int i = 0; i <= 1; i++) {
-        clientScreens[i] = ofPtr<ClientScreen>(new ClientScreen(i, meshControls[i]));
-        clientScreens[i]->setInteractionEnabled(isUIEnabled);
-        screens.push_back(clientScreens[i]);
-    }
+	for (int i = 0; i <= 1; i++) {
+		clientScreens[i] = ofPtr<ClientScreen>(new ClientScreen(i, meshControls[i]));
+		clientScreens[i]->setInteractionEnabled(isUIEnabled);
+		screens.push_back(clientScreens[i]);
+	}
 }
 
 void BaseApp::setup() {
@@ -40,22 +40,22 @@ void BaseApp::setup() {
 	assert(coordinateSystem != NULL);
 	
 	setupInternal();
-    setupScreens();
+	setupScreens();
 }
 
 void BaseApp::setCoordinateSystem(ofPtr<CoordinateSystem> cs) {
 	coordinateSystem = cs;
 	fbos->resize(coordinateSystem->getTexturesNum());
-    for (int i = 0; i < coordinateSystem->getTexturesNum(); i++) {
-        fbos->at(i).allocate(coordinateSystem->getMaxTexCoords(i).x, coordinateSystem->getMaxTexCoords(i).y);
-    }
-    
-    if (meshControls[0]) {
-        string composition = getMeshCompositionString();
-        setupInternal();
-        setupScreens();
-        loadMeshCompositionString(composition);
-    }
+	for (int i = 0; i < coordinateSystem->getTexturesNum(); i++) {
+		fbos->at(i).allocate(coordinateSystem->getMaxTexCoords(i).x, coordinateSystem->getMaxTexCoords(i).y);
+	}
+	
+	if (meshControls[0]) {
+		string composition = getMeshCompositionString();
+		setupInternal();
+		setupScreens();
+		loadMeshCompositionString(composition);
+	}
 }
 
 void BaseApp::setMeshVisiblity(bool enabled) {
