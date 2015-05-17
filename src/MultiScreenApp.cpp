@@ -1,6 +1,9 @@
 #include "MultiScreenApp.h"
 #include "Screen.h"
+
 #include <ofAppGlutWindow.h>
+
+#include <cassert>
 
 using namespace ofxDome;
 
@@ -109,7 +112,11 @@ void MultiScreenApp::mousePressed( int x, int y, int button ) {
 }
 
 void MultiScreenApp::mouseReleased() {
+#if OF_VERSION_MAJOR * 10000 + OF_VERSION_MINOR * 100 + OF_VERSION_PATCH >= 81
+	screens[activeScreen]->mouseReleased(0, 0, 0);
+#else
 	screens[activeScreen]->mouseReleased();
+#endif
 }
 
 void MultiScreenApp::mouseReleased(int x, int y, int button ) {

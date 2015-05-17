@@ -8,9 +8,6 @@ namespace ofxDome {
 		ofVbo vbo;
 		ofPtr<CoordinateSystem> coordinateSystem;
 		ofPtr<Mesh> mesh;
-		/*std::vector<ofVec2f> verts, texCoords;
-		std::vector<ofIndexType> indices;
-		std::vector<bool> errors;*/
 		int textureId;
 		
 	public:

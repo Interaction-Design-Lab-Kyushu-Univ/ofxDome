@@ -1,7 +1,5 @@
 #pragma once
 
-#include "PolarCoords.h"
-
 namespace ofxDome {
 	typedef enum {
 		COORDINATE_SYSTEM_POLAR,
@@ -19,6 +17,12 @@ namespace ofxDome {
 	} ECubeTextureIndex;
 	
 	static const int UV_DIVISION = 100;
-    
-    static const float OVERWRAP_RADIAN = 10.0f / 180.0f * M_PI;
+	
+	inline float MATH_PI() {
+		return 3.145926535897932f;
+	}
+
+	inline float OVERWRAP_RADIAN() {
+		return 10.0f / 180.0f * MATH_PI();
+	}
 }

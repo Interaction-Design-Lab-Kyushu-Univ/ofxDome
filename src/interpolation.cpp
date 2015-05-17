@@ -1,5 +1,7 @@
 #include "interpolation.h"
 
+#include <cassert>
+
 namespace {
 	bool compareVec2f(const ofVec2f& a, const ofVec2f& b) {
 		return a.x < b.x;

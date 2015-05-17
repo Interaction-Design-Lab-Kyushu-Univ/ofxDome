@@ -73,7 +73,7 @@ namespace ofxDome {
 	protected:
 		PolarCoords convertUV(const ofVec2f& uv, int textureId) const;
 	public:
-		CoordinateSystemPanorama(ofVec2f textureSize, float maxPhi = M_PI_2);
+		CoordinateSystemPanorama(ofVec2f textureSize, float maxPhi = MATH_PI() * 0.5f);
 		ofVec2f getMaxTexCoords(int textureId) const;
 		int getTexturesNum() const;
 	};

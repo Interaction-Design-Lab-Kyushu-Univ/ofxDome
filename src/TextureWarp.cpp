@@ -33,21 +33,19 @@ void TextureWarp::generate() {
 			float u = (float)i / (UV_DIVISION - 1);
 			
 			PolarCoords pc = coordinateSystem->convertUVFast(ofVec2f(u, v), textureId);
-            ofVec2f sp;
+			ofVec2f sp;
 			bool success = mesh->convertPolarCoordsToScreenPosition(pc, &sp);
 			if (success) {
 				verts.push_back(sp);
 				texCoords.push_back(ofVec2f(u * maxTexCoords.x, v * maxTexCoords.y));
 				errors.push_back(false);
 			} else {
-				// cout << "error:" << u << "," << v << " " << pc.theta << "," << pc.phi << endl;
 				verts.push_back(ofVec2f());
 				texCoords.push_back(ofVec2f());
 				errors.push_back(true);
 			}
 		}
 	}
-	// cout << endl;
 	
 	for (int j = 0; j < UV_DIVISION - 1; j++) {
 		for (int i = 0; i < UV_DIVISION - 1; i++) {

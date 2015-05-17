@@ -29,7 +29,7 @@ namespace ofxDome {
 		 * @param cs CoordinateSystem
 		 */
 		
-		void setCoordinateSystemPanorama(int fboWidth, int fboHeight, float maxPhi = M_PI_2);
+		void setCoordinateSystemPanorama(int fboWidth, int fboHeight, float maxPhi = MATH_PI() * 0.5f);
 		
 		void setCoordinateSystemPolar(int fboSize, float minPhi = 0.0f);
 		

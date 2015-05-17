@@ -13,7 +13,7 @@ BaseApp::BaseApp() {
 }
 
 void BaseApp::setupInternal() {
-	ofPtr<QuarterSphereMesh> qsmeshes[] = { QuarterSphereMesh::create(M_PI_2), QuarterSphereMesh::create(- M_PI_2) };
+	ofPtr<QuarterSphereMesh> qsmeshes[] = { QuarterSphereMesh::create(MATH_PI() * 0.5f), QuarterSphereMesh::create(- MATH_PI() * 0.5f) };
 	meshControls[0] = ofPtr<MeshControl>(new MeshControl(qsmeshes[0], coordinateSystem, fbos));
 	meshControls[1] = ofPtr<MeshControl>(new MeshControl(qsmeshes[1], coordinateSystem, fbos));
 	meshes[0] = qsmeshes[0];

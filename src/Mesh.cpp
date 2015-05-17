@@ -13,43 +13,43 @@ namespace {
 	float cross(const ofVec2f& a, const ofVec2f &b) {
 		return a.x * b.y - b.x * a.y;
 	}
-    
-    ofVec3f operator* (const ofVec3f& vec, const ofMatrix3x3& mat) {
-        ofVec3f result;
-        result.x = mat.a * vec.x + mat.d * vec.y + mat.g * vec.z;
-        result.y = mat.b * vec.x + mat.e * vec.y + mat.h * vec.z;
-        result.z = mat.c * vec.x + mat.f * vec.y + mat.i * vec.z;
-        return result;
-    }
 	
-    // return true if p is in the abc triangle
+	ofVec3f operator* (const ofVec3f& vec, const ofMatrix3x3& mat) {
+		ofVec3f result;
+		result.x = mat.a * vec.x + mat.d * vec.y + mat.g * vec.z;
+		result.y = mat.b * vec.x + mat.e * vec.y + mat.h * vec.z;
+		result.z = mat.c * vec.x + mat.f * vec.y + mat.i * vec.z;
+		return result;
+	}
+	
+	// return true if p is in the abc triangle
 	bool triangleToScreenPosition(const PolarCoords& p, const MeshVert& a, const MeshVert& b, const MeshVert& c, ofVec2f* result) {
 		ofVec3f pv = p.direction();
-        ofVec3f av = a.pc.direction();
+		ofVec3f av = a.pc.direction();
 		ofVec3f bv = b.pc.direction();
 		ofVec3f cv = c.pc.direction();
 
-        ofMatrix3x3 mat;
-        mat.a = av.x - bv.x;
-        mat.b = av.y - bv.y;
-        mat.c = av.z - bv.z;
-        mat.d = av.x - cv.x;
-        mat.e = av.y - cv.y;
-        mat.f = av.z - cv.z;
-        mat.g = pv.x;
-        mat.h = pv.y;
-        mat.i = pv.z;
+		ofMatrix3x3 mat;
+		mat.a = av.x - bv.x;
+		mat.b = av.y - bv.y;
+		mat.c = av.z - bv.z;
+		mat.d = av.x - cv.x;
+		mat.e = av.y - cv.y;
+		mat.f = av.z - cv.z;
+		mat.g = pv.x;
+		mat.h = pv.y;
+		mat.i = pv.z;
 
-        mat.invert();
-        
-        ofVec3f s = av * mat;
-        
-        if (0.0f <= s.x && s.x <= 1.0f && 0.0f <= s.y && s.y <= 1.0f && 0.0f < s.z && s.z <= 1.0f) {
-            *result = a.screenPosition + (b.screenPosition - a.screenPosition) * s.x + (c.screenPosition - a.screenPosition) * s.y;
-            return true;
-        } else {
-            return false;
-        }
+		mat.invert();
+		
+		ofVec3f s = av * mat;
+		
+		if (0.0f <= s.x && s.x <= 1.0f && 0.0f <= s.y && s.y <= 1.0f && 0.0f < s.z && s.z <= 1.0f) {
+			*result = a.screenPosition + (b.screenPosition - a.screenPosition) * s.x + (c.screenPosition - a.screenPosition) * s.y;
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	std::ostream& operator<< (std::ostream& stream, const MeshLine& line) {
@@ -93,8 +93,8 @@ void MeshLine::generateQuaternionInterpolation() const {
 		QuaternionAnchor anchor(t, mesh->getVert(vertIndices[i]).pc.quaternion());
 		quatAnchors.push_back(anchor);
 	}
-    
-    interpolationQuaternion = getLinearInterpolation(quatAnchors);
+	
+	interpolationQuaternion = getLinearInterpolation(quatAnchors);
 	shouldRegenerateQuaternionInterpolation = false;
 }
 
@@ -112,7 +112,7 @@ MeshVert MeshLine::getInterpolatedMeshVert(float t) const {
 	return MeshVert(getInterpolatedScreenPosition(t), interpolationQuaternion(t));
 }
 
-bool MeshLine::setAsDirty() {
+void MeshLine::setAsDirty() {
 	shouldRegenerateScreenPositionInterpolation = true;
 	shouldRegenerateQuaternionInterpolation = true;
 }
@@ -161,7 +161,7 @@ MeshVert Mesh::getVert(int index) const {
 	return verts[index];
 }
 
-ofVec2f Mesh::moveVert(int index, ofVec2f screenPosition) {
+void Mesh::moveVert(int index, ofVec2f screenPosition) {
 	verts[index].screenPosition = screenPosition;
 	
 	for (int i = 0; i < lines.size(); i++) {
@@ -191,8 +191,8 @@ int Mesh::getLinesNum() const {
 
 bool Mesh::convertPolarCoordsToScreenPosition(const PolarCoords& pc, ofVec2f* result) const {
 	for (int i = 0; i < triIndices.size(); i += 3) {
-        bool success = triangleToScreenPosition(pc, verts[triIndices[i]], verts[triIndices[i+1]], verts[triIndices[i+2]], result);
-        if (success) return true;
+		bool success = triangleToScreenPosition(pc, verts[triIndices[i]], verts[triIndices[i+1]], verts[triIndices[i+2]], result);
+		if (success) return true;
 	}
 	
 	for (int i = 0; i < quadIndices.size(); i += 4) {
@@ -200,10 +200,10 @@ bool Mesh::convertPolarCoordsToScreenPosition(const PolarCoords& pc, ofVec2f* re
 		const MeshVert& v1 = verts[quadIndices[i+1]];
 		const MeshVert& v2 = verts[quadIndices[i+2]];
 		const MeshVert& v3 = verts[quadIndices[i+3]];
-        bool success = triangleToScreenPosition(pc, v0, v1, v2, result);
-        if (success) return true;
-        success = triangleToScreenPosition(pc, v0, v2, v3, result);
-        if (success) return true;
+		bool success = triangleToScreenPosition(pc, v0, v1, v2, result);
+		if (success) return true;
+		success = triangleToScreenPosition(pc, v0, v2, v3, result);
+		if (success) return true;
 	}
 	
 	// cannot find screen position
@@ -273,21 +273,21 @@ QuarterSphereMesh::QuarterSphereMesh() {
 QuarterSphereMesh::QuarterSphereMesh(float centerTheta, int h_div, int v_div)
 : horizontalDivision(h_div), verticalDivision(v_div), actualTopLineSmoothness(-1)
 {
-    const float extentionRad = OVERWRAP_RADIAN * 0.5f;
-    
+	const float extentionRad = OVERWRAP_RADIAN() * 0.5f;
+	
 	verts.reserve(verticalDivision * (horizontalDivision + 1) + 1);
 	
 	// polar vert
 	verts.push_back(MeshVert(
 		ofVec2f(0.5f, 0.0f),
-		PolarCoords(centerTheta, M_PI_2 + extentionRad)
+		PolarCoords(centerTheta, MATH_PI() * 0.5f + extentionRad)
 	));
 	
 	for (int i = 0; i < verticalDivision; i++) {
 		for (int j = 0; j < horizontalDivision + 1; j++) {
 			ofVec2f screenPosition = ofVec2f(0.1f + (float)j / (horizontalDivision+1), (float)(i+1) / (verticalDivision+1));
-			float theta = normalizeRad(centerTheta + ((float)j / horizontalDivision - 0.5f) * (M_PI + extentionRad));
-			float phi = M_PI_2 + extentionRad - (M_PI_2 + extentionRad) * (float)(i+1) / verticalDivision;
+			float theta = normalizeRad(centerTheta + ((float)j / horizontalDivision - 0.5f) * (MATH_PI() + extentionRad));
+			float phi = MATH_PI() * 0.5f + extentionRad - (MATH_PI() * 0.5f + extentionRad) * (float)(i + 1) / verticalDivision;
 			verts.push_back(MeshVert(screenPosition, PolarCoords(theta, phi)));
 		}
 	}
@@ -418,12 +418,12 @@ ofPtr<QuarterSphereMesh> QuarterSphereMesh::createDivision() {
 			int top = MAX(pos - (mesh->horizontalDivision+1), 0);
 			int bottom = pos + mesh->horizontalDivision + 1;
 			ofVec2f scrPos = (mesh->verts[pos-1].screenPosition + mesh->verts[pos+1].screenPosition + mesh->verts[top].screenPosition + mesh->verts[bottom].screenPosition) * 0.25f;
-            
-            ofQuaternion mid1, mid2, mid3;
-            mid1.slerp(0.5f, mesh->verts[pos-1].pc.quaternion(), mesh->verts[pos+1].pc.quaternion());
-            mid2.slerp(0.5f, mesh->verts[top].pc.quaternion(), mesh->verts[bottom].pc.quaternion());
-            mid3.slerp(0.5f, mid1, mid2);
-            
+			
+			ofQuaternion mid1, mid2, mid3;
+			mid1.slerp(0.5f, mesh->verts[pos-1].pc.quaternion(), mesh->verts[pos+1].pc.quaternion());
+			mid2.slerp(0.5f, mesh->verts[top].pc.quaternion(), mesh->verts[bottom].pc.quaternion());
+			mid3.slerp(0.5f, mid1, mid2);
+			
 			mesh->verts[pos] = MeshVert(scrPos, mid3);
 		}
 	}
@@ -468,35 +468,35 @@ bool QuarterSphereMesh::loadCompositionString(const std::string& str) {
 }
 
 void QuarterSphereMesh::generateActualTopLine(int smooth) {
-    ofVec2f result;
-    
-    actualTopLine.clear();
-    actualTopLine.reserve(smooth * verticalDivision * 2 + 1);
-    
-    for (int i = 0; i <= smooth * verticalDivision * 2; i++) {
-        float level = (float)i / (smooth * verticalDivision);
-        PolarCoords pc(0.0f, M_PI_2 * level);
-        if (convertPolarCoordsToScreenPosition(pc, &result)) {
-            actualTopLine.push_back(result);
-        }
-    }
-    
-    actualTopLineSmoothness = smooth;
+	ofVec2f result;
+	
+	actualTopLine.clear();
+	actualTopLine.reserve(smooth * verticalDivision * 2 + 1);
+	
+	for (int i = 0; i <= smooth * verticalDivision * 2; i++) {
+		float level = (float)i / (smooth * verticalDivision);
+		PolarCoords pc(0.0f, MATH_PI() * 0.5f * level);
+		if (convertPolarCoordsToScreenPosition(pc, &result)) {
+			actualTopLine.push_back(result);
+		}
+	}
+	
+	actualTopLineSmoothness = smooth;
 }
 
 void QuarterSphereMesh::drawLines(int smooth) {
-    Mesh::drawLines(smooth);
-    
-    if (smooth != actualTopLineSmoothness) {
-        generateActualTopLine(smooth);
-    }
-    
-    ofPushStyle();
-    ofSetColor(255, 0, 0);
-    if (actualTopLine.size() >= 2) {
-        for (int i = 0; i < actualTopLine.size() - 1; i++) {
-            ofLine(actualTopLine[i], actualTopLine[i+1]);
-        }
-    }
-    ofPopStyle();
+	Mesh::drawLines(smooth);
+	
+	if (smooth != actualTopLineSmoothness) {
+		generateActualTopLine(smooth);
+	}
+	
+	ofPushStyle();
+	ofSetColor(255, 0, 0);
+	if (actualTopLine.size() >= 2) {
+		for (int i = 0; i < actualTopLine.size() - 1; i++) {
+			ofLine(actualTopLine[i], actualTopLine[i+1]);
+		}
+	}
+	ofPopStyle();
 }

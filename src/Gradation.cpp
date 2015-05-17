@@ -13,9 +13,9 @@ QuarterSphereGradation::QuarterSphereGradation() {
 	
 void QuarterSphereGradation::generate() {
 	assert(mesh != NULL);
-    
-    const float hWidth = OVERWRAP_RADIAN / (M_PI + OVERWRAP_RADIAN);
-    const float vWidth = OVERWRAP_RADIAN / (M_PI_2 + OVERWRAP_RADIAN);
+	
+	const float hWidth = OVERWRAP_RADIAN() / (MATH_PI() + OVERWRAP_RADIAN());
+	const float vWidth = OVERWRAP_RADIAN() / (MATH_PI() * 0.5f + OVERWRAP_RADIAN());
 	
 	vbo.clear();
 	

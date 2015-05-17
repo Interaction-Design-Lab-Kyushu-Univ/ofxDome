@@ -36,7 +36,7 @@ namespace ofxDome {
 		std::vector<int> vertIndices;
 		ofVec2f getInterpolatedScreenPosition(float t) const;
 		MeshVert getInterpolatedMeshVert(float t) const;
-		bool setAsDirty();
+		void setAsDirty();
 		void draw(int smooth);
 	};
 
@@ -56,14 +56,14 @@ namespace ofxDome {
 		
 		MeshVert getVert(int index) const;
 		int getVertsNum() const;
-		ofVec2f moveVert(int index, ofVec2f screenPosition);
+		void moveVert(int index, ofVec2f screenPosition);
 
 		const MeshLine& getLine(int index) const;
 		int getLinesNum() const;
 		
 		virtual void drawLines(int smooth);
 		
-        // return true if success
+		// return true if success
 		bool convertPolarCoordsToScreenPosition(const PolarCoords& pc, ofVec2f* result) const;
 		
 		// return true if error occurs
@@ -75,10 +75,10 @@ namespace ofxDome {
 		int horizontalDivision, verticalDivision;
 		void generateLines();
 		void generateFaces();
-        
-        int actualTopLineSmoothness;
-        std::vector<ofVec2f> actualTopLine;
-        void generateActualTopLine(int smooth);
+		
+		int actualTopLineSmoothness;
+		std::vector<ofVec2f> actualTopLine;
+		void generateActualTopLine(int smooth);
 		
 		QuarterSphereMesh();
 		QuarterSphereMesh(float centerTheta, int horizontalDivsion, int verticalDivision);

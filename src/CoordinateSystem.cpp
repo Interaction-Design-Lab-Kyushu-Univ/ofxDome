@@ -42,7 +42,7 @@ PolarCoords CoordinateSystemPolar::convertUV(const ofVec2f& uv, int textureId) c
 	ofVec2f xy = uv * 2.0f - ofVec2f(1.0f, 1.0f);
 	
 	float distance = xy.length();
-	float phi = M_PI_2 * (1.0f - distance) + minPhi * distance;
+	float phi = MATH_PI() * 0.5f * (1.0f - distance) + minPhi * distance;
 	
 	float theta = atan2(xy.y, xy.x);
 	return PolarCoords(theta, phi);
@@ -65,7 +65,7 @@ CoordinateSystemPanorama::CoordinateSystemPanorama(ofVec2f textureSize, float ma
 }
 
 PolarCoords CoordinateSystemPanorama::convertUV(const ofVec2f& uv, int textureId) const {
-	float theta = (uv.x * 2.0f - 1.0f) * M_PI;
+	float theta = (uv.x * 2.0f - 1.0f) * MATH_PI();
 	float phi = maxPhi - uv.y * maxPhi;
 	return PolarCoords(theta, phi);
 }
